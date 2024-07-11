@@ -40,18 +40,22 @@ public class RegularCheckBuilder implements CheckBuilder{
                 }
             }
             else {
-                String[] key_value = arg.split("=");
-                String card_type = key_value[0];
-                String card_value = key_value[1];
-                if (card_type.equals("discountCard")){
-                    discountCard = discountCardRepository.query(new DiscountCardSpecificationByName(card_value)).getFirst();
-                }
-                else if (card_type.equals("balanceDebitCard")){
-                    try {
-                        debitCardBalance = Double.parseDouble(card_value);
-                    } catch (NumberFormatException e) {
-                        throw new BadRequestException("Debit card balance must be in a valid numeric format.");
+                try {
+                    String[] key_value = arg.split("=");
+                    String card_type = key_value[0];
+                    String card_value = key_value[1];
+                    if (card_type.equals("discountCard")){
+                        discountCard = discountCardRepository.query(new DiscountCardSpecificationByName(card_value)).getFirst();
                     }
+                    else if (card_type.equals("balanceDebitCard")){
+                        debitCardBalance = Double.parseDouble(card_value);
+                    }
+                }
+                catch (NumberFormatException e) {
+                    throw new BadRequestException("Debit card balance must be in a valid numeric format.");
+                }
+                catch (ArrayIndexOutOfBoundsException e) {
+                    throw new BadRequestException("Something is wrong in input args pairs");
                 }
             }
         }
